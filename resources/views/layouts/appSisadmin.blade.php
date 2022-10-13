@@ -83,8 +83,8 @@
                 </li>
                 <li class="submenu"> <a href="#"><i class="icon icon-th-list"></i> <span>Ordem de Serviço</span></a>
                     <ul>
-                        <li><a href="/ordemdeServico"><i class="icon-plus"></i>inserir OS</a></li>
-                        <li><a href="#">Ver OS</a></li>
+                        <li><a href="/cadastrarOS"><i class="icon-plus"></i>inserir OS</a></li>
+                        <li><a href="Ver_ordemdeServico">Ver OS</a></li>
                         <li><a href="#">Alterar OS</a></li>
                     </ul>
                 </li>
@@ -97,7 +97,7 @@
                 </li>
                 <li class="submenu"><a href="#"><i class="icon icon-tint"></i> <span>Funcionários</span></a>
                     <ul>
-                        <li><a href="#"><i class="icon-plus"></i>Cadastrar Funcionário</a></li>
+                        <li><a href="register"><i class="icon-plus"></i>Cadastrar Funcionário</a></li>
                         <li><a href="funcionarios">Ver todos os Funcionário</a></li>
                         <li><a href="">Consultar Funcionário</a></li>            
                     </ul>

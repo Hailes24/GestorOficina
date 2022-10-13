@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class ClienteController extends Controller{
+
+    public function __construct(Request $request, )
+    {
+
+    }
     
     public function index(){
         
@@ -22,6 +27,8 @@ class ClienteController extends Controller{
     
     public function create(Request $data){
         /*$data ->validate([
+            $data = 
+            return view('admin.pages.create');
              'telefone'=>'required|unique:clientes|min:9|max:9',  'nome'=>'required|min:10|max:100','email'=>'required|email']);
              */   
          $regra=['telefone'=>'required|unique:clientes|min:9|max:9',  'nome'=>'required|min:10|max:100','email'=>'required|email'];
@@ -32,8 +39,7 @@ class ClienteController extends Controller{
          'nome.min'=>'Nome inválido',
          'nome.max'=>'Nome inválido'];
          $data->validate($regra, $message);
-        // $cliente=Cliente::all();
-         
+                  
          Cliente::create([
              'idFuncionario' => $data['idFuncionario'],
              'nome' => $data['nome'], 
@@ -41,11 +47,11 @@ class ClienteController extends Controller{
              'telefone' => $data['telefone'],           
              'dataHora' => now()->format('Y-m-d H:i'),             
          ]);
-         return view('/dashboard');
+         return redirect('/dashboard');
      }
 
     
-     public function store(){
+    public function store(){
         
         $search = request('search');
         

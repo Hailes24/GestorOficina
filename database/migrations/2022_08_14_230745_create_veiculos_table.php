@@ -17,7 +17,7 @@ class CreateVeiculosTable extends Migration
             $table->id('id');
             $table->unsignedBigInteger('idFuncionario');
             $table->foreign('idFuncionario')->references('id')->on('users');
-           $table->unsignedBigInteger('idcliente');
+           $table->unsignedBigInteger('idcliente')->nullable();
             $table->foreign('idcliente')->references('id')->on('clientes');
             $table->string('placa');
             $table->string('modelo');

@@ -25,6 +25,7 @@ Route::Post('/cadastrarFornecedor',[App\Http\Controllers\FornecedorController::c
 Route::get('/verFornecedores',[App\Http\Controllers\FornecedorController::class, 'show']);
 Route::get('/pesquisarFornecedor',[App\Http\Controllers\FornecedorController::class, 'store']);
 Route::get('/ordemdeServico',[App\Http\Controllers\OrdemDeServicoController::class, 'index']);
+Route::get('/Ver_ordemdeServico',[App\Http\Controllers\OrdemDeServicoController::class, 'show']);
 Route::Post('/cadastrarOS',[App\Http\Controllers\OrdemDeServicoController::class, 'create']);
 Route::get('/veiculo',[App\Http\Controllers\VeiculoController::class, 'index']);
 Route::Post('/incluirVeiculo',[App\Http\Controllers\VeiculoController::class, 'create']);

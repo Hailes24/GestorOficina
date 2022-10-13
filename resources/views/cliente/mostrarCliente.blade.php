@@ -43,7 +43,7 @@
                   <td>{{$cli->email}}</td>
                   <td class="center">{{$cli->dataHora}}</td> 
                   <td class="center"><a class="btn btn-danger btn-mini" href="/cliente-listar/{{$cli->id}}">Eliminar</a> 
-                  <a class="btn btn-success btn-mini">Editar</a></td> 
+                  
                 </tr> 
               </tbody>
               

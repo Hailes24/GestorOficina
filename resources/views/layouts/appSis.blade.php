@@ -44,7 +44,7 @@
         <!--sidebar-menu MENU QUUE FICA AO LADO DAS FUNCIONALIDADES-->
         <div id="sidebar"><a href="#" class="visible-phone"><i class="icon icon-home"></i> oficina Auto nelo</a>
             <ul>
-                <li class="active"><a href="#"><i class="icon icon-home"></i> <span>Oficina Auto Nelo</span></a> </li>
+                <li class="active"><a href="#"><i class="icon icon-home"></i> <span>VENDER</span></a> </li>
                 <li class="submenu"> <a href=""><i class="icon icon-signal"></i> <span>Cliente</span></a>
                     <ul>
                         <li><a class="sAdd" title="" href="/Cliente"><i class="icon-plus"></i>Cadastrar Cliente</a></li>
@@ -75,8 +75,8 @@
                 </li>
                 <li class="submenu"> <a href="#"><i class="icon icon-th-list"></i> <span>Ordem de Serviço</span></a>
                     <ul>
-                        <li><a href="/ordemdeServico"><i class="icon-plus"></i>inserir OS</a></li>
-                        <li><a href="#">Ver OS</a></li>
+                        <li><a href="/cadastrarOS"><i class="icon-plus"></i>inserir OS</a></li>
+                        <li><a href="Ver_ordemdeServico">Ver OS</a></li>
                         <li><a href="#">Alterar OS</a></li>
                     </ul>
                 </li>
@@ -87,13 +87,13 @@
                         <li><a href="verServicos">Ver Todos Serviços</a></li>
                     </ul>
                 </li>
-                <li class="submenu"><a href="#"><i class="icon icon-tint"></i> <span>Funcionários</span></a>
+                <!--li class="submenu"><a href="#"><i class="icon icon-tint"></i> <span>Funcionários</span></a>
                     <ul>
                         <li><a href="#"><i class="icon-plus"></i>Cadastrar Funcionário</a></li>
                         <li><a href="funcionarios">Ver todos os Funcionário</a></li>
                         <li><a href="">Consultar Funcionário</a></li>            
                     </ul>
-                </li>
+                </li-->
                 <li class="submenu"><a href="#"><i class="icon icon-pencil"></i> <span>Fatura</span></a>
                     <ul>
                         <li><a href="#"><i class="icon-plus"></i>Cadastrar Fatura</a></li>

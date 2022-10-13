@@ -1,12 +1,10 @@
 
 @extends('layouts.appSis')
 @section('body')
-
 @component('componentes.veiculo')
-
 @endcomponent
-            <li class="bg_ls"> <a href="mostrarVeiculos">Ver Todos Veículos</a> </li>  
-            <li class="bg_lb"> <a href="#">Alterar dado do Veículo</a> </li>      
+            <li class="bg_ls"> <a href="Ver_ordemdeServico">Ver OS</a> </li>  
+            <li class="bg_lb"> <a href="cadastrarOS">Cadastrar OS</a> </li>      
           </ul>
         </div>
       </div>
@@ -20,11 +18,10 @@
               <h5>Dados do Veículo</h5>
             </div>
             <div class="widget-content nopadding">
-              <form  method="post" action="/incluirVeiculo" id="form-wizard" class="form-horizontal">
+              <form  method="post" action="/cadastrarOS" id="form-wizard" class="form-horizontal">
                 @csrf
                 <div id="form-wizard-1" class="step">
-                  <input type="hidden" name="idFuncionario" value="{{Auth::user()->id}}">
-                 
+                  <input type="hidden" name="idFuncionario" value="{{Auth::user()->id}}">                 
                   <div class="control-group">
                     <br><br>
                     <label class="control-label">descricção Doserviço:</label>
@@ -41,20 +38,27 @@
                   <div class="control-group">
                     <label class="control-label">Data Entrega:</label>
                     <div class="controls">
-                      <input id="dadaEntrega" type="text" class="form-control" placeholder="Data da Entrega" name="dadaEntrega" autocomplete="new-password">
+                      <input id="dadaEntrega"type="text" class="form-control" placeholder="Data da Entrega" name="dadaEntrega" autocomplete="new-password">
                     </div>
                   </div> 
+                  
                   <div class="control-group">
-                    <label class="control-label">COR:</label>
+                  <label class="control-label">Veículo:</label>
                     <div class="controls">
-                      <input id="dataNasc" type="text" class="form-control" placeholder="COR" name="cor" autocomplete="new-password">
+                        <span class="add-on bg_lg"></span><input id="idVeiculo" type="text" class="form-control" placeholder="idVeiculo" name="idVeiculo" value=""  list="tVeiculo"  autocomplete="idVeiculo" autofocus required>
+                        <datalist id="tVeiculo">
+                          @foreach($veiculo as $vei)
+                            <option value="{{$vei->id}}">{{$vei->marca}}</option>
+                            @endforeach
+                        </datalist>
                     </div>
-                  </div> 'idFuncionario','','idVeiculo','','dataHora','','',
+                  </div>   
     
 
                   <div class="control-group">
+                  <label class="control-label">Produto:</label>
                     <div class="controls">
-                        <span class="add-on bg_lg"></span><input id="idproduto" type="text" class="form-control" placeholder="Produto" name="idcliente" value=""  list="tproduto"  autocomplete="idcliente" autofocus required>
+                        <span class="add-on bg_lg"></span><input id="idproduto" type="text" class="form-control" placeholder="Produto" name="idproduto" value=""  list="tproduto"  autocomplete="idproduto" autofocus required>
                         <datalist id="tproduto">
                           @foreach($produto as $pro)
                             <option value="{{$pro->id}}">{{$pro->nome}}</option>

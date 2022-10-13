@@ -23,6 +23,7 @@ class CreateOrdemDeServicosTable extends Migration
             $table->foreign('idVeiculo')->references('id')->on('veiculos');
             $table->string('dadaEntrega');
             $table->string('dataHora');
+            $table->string('dataDaRevisao');
             $table->string('descricaoDoservico');
             $table->string('DescricaoCliente');
             $table->timestamps();

@@ -1,15 +1,16 @@
 @extends('layouts.appSis')
 @section('body')
-<!--top-Header-menu-->
 
-<!--start-top-serch-->
-@component('componentes.pesquisa')
+@component('componentes.os')
 
 @endcomponent
-
-    <h1>Mostrar toda ordem do serviço</h1>
-  </div>
-  
+          <li class="bg_ls"> <a href="mostrarVeiculos">Ver OS</a> </li>  
+            <li class="bg_lb"> <a href="cadastrarOS">Cadastrar OS</a> </li>      
+          </ul>
+        </div>
+      </div>
+    </div>
+    
   <div class="container-fluid">
     <hr>
     <div class="row-fluid">
@@ -29,14 +30,14 @@
                   <th>Descrição do serviço</th>
                 </tr>
               </thead>
-              @foreach($cliente as $cli)
+              @foreach($ordemdeservico as $OS)
               <tbody>
-                <tr class="odd gradeX">
-                  <td>xxxxxxxxxx</td>
-                  <td>YYYYYYYYYYY</td>
-                  <td>ZZZZZZZZZZZZZZ</td>
-                  <td class="center">GGGGGGGGGGGG</td>
-                  <td class="center">TTTTTTTTTTTT</td>
+                <tr class="odd gradeX">    
+                  <td>{{$OS->dataHora}}</td>
+                  <td>{{$OS->dadaEntrega}}</td>
+                  <td>{{$OS->descricaoDoservico}}</td>
+                  <td class="center">{{$OS->descricaoDoservico}}</td>
+                  <td class="center">tttttttt</td>
                 </tr> 
               </tbody>
               @endforeach
@@ -47,10 +48,7 @@
     </div>
   </div>
    <a href="#">Ver mais</a>
-</div>
-<!--Footer-part-->
-<div class="">
-  <div id="footer" class="span12"> 2013 &copy; Matrix Admin. Brought to you by <a href="http://themedesigner.in">Themedesigner.in</a> </div>
+   <br/> <br/> <br/> <br/> <br/> <br/><br/> <br/> <br/> <br/> <br/> <br/><br/> <br/> <br/> <br/> <br/> <br/><br/> <br/> <br/> <br/> <br/> <br/>
 </div>
 @endsection
 

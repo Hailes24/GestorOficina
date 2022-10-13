@@ -26,8 +26,7 @@ class VeiculoController extends Controller
      }
  
      public function create(Request $data)    {
-        $cliente=Cliente::all();
-       
+              
          Veiculo::create([
              'idFuncionario' => $data['idFuncionario'],
              'idcliente' => $data['idcliente'],
@@ -37,7 +36,7 @@ class VeiculoController extends Controller
              'combustivel' => $data['combustivel'],            
              'cor' => $data['cor'],            
          ]);
-         return redirect('/dashboard', compact('cliente'));      
+         return redirect('/dashboard');      
      }
  
      public function store(){

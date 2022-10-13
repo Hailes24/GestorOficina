@@ -25,14 +25,14 @@
                 <div id="form-wizard-1" class="step">
                   <input type="hidden" name="idFuncionario" value="{{Auth::user()->id}}">
                   <div class="control-group">                   
-                    <label class="control-label">Placa:</label>
+                    <label class="control-label">PLACA:</label>
                     <div class="controls">
                       <input id="username" type="text" name="placa" placeholder="Nome da placa" />
                     </div>
                   </div>
                   <div class="control-group">
                     <br><br>
-                    <label class="control-label">Modelo:</label>
+                    <label class="control-label">MODELO:</label>
                     <div class="controls">
                       <input id="username" type="text" name="modelo" placeholder="Nome do modelo" />
                     </div>
@@ -57,8 +57,9 @@
                   </div> 
 
                   <div class="control-group">
+                    <label class="control-label">CLIENTE:</label>
                     <div class="controls">
-                        <span class="add-on bg_lg"></span><input id="idcliente" type="text" class="form-control" placeholder="Cliente" name="idcliente" value=""  list="tcliente"  autocomplete="idcliente" autofocus required>
+                        <span class="add-on bg_lg"></span><input id="idcliente" type="text" class="form-control" placeholder="Cliente" name="idcliente" value=""  list="tcliente"  <!--autocomplete="idcliente"--> >
                         <datalist id="tcliente">
                           @foreach($cliente as $cli)
                             <option value="{{$cli->id}}">{{$cli->nome}}</option>

@@ -11,13 +11,7 @@ use App\Models\Fornecedore;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-class FornecedorController extends Controller
-{
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+class FornecedorController extends Controller{    
 
     public function index(){
         return view('fornecedor/cadastrarFornecedor');
@@ -42,7 +36,7 @@ class FornecedorController extends Controller
             'email' => $data['email'],
             'telefone' => $data['telefone'],                    
         ]);
-        return redirect('/dashboard', compact('cliente'));
+        return redirect('/dashboard');
     }
 
 
