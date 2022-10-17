@@ -2,66 +2,84 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Providers\RouteServiceProvider;
-use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Models\cliente;
 use App\Models\Servico;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
-class ServicoController extends Controller{
+class ServicoController extends Controller
+{
+
+    protected $request;
+    protected $repository;
+    public function __construct(Request $request, Servico $servico)
+    {
+        $this->request = $request;
+        $this->repository = $servico;
+    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(){
-        return view('servico/incluirServico');
+    public function index()
+    {
+        $servicos = $this->repository->paginate(15);
+        return view('admin.pages.servicos.index', [
+            'servicos' => $servicos
+        ])->with('i', (request()->input('page', 1) - 1) * 5);
     }
 
-    public function create(Request $data){
-        $cliente=Cliente::all();
-       
-        $regra=['nome'=>'required|unique:servicos|min:5|max:500', 'preco'=>'required'];
-        $message=['required'=>'O campo não pode estar em branco',
-        'nome.min'=>'Nome inválido',
-        'nome.max'=>'Nome inválido',
-        'nome.unique'=>'Este Serviço Já foi cadastrado. Por Favor, insira outro diferente'];
-        $data->validate($regra, $message);
-        Servico::create([
-            'idFuncionario' => $data['idFuncionario'], 
-            'nome' => $data['nome'], 
-            'preco' => $data['preco'],             
-        ]);
-        return view('/dashboard', compact('cliente'));
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        return view('admin.pages.servicos.create');
     }
 
-    
-    public function store(){
-        //
-        $search = request('search');
-        
-        if($search){
-            $servico=Servico::where([
-                ['nome', 'like','%'. $search.'%']
-            ])->get();
-            return view('servico/pesquisarServico', ['search'=> $servico, ' search'=> $search]);
-        }else{
-            
-        }
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        $data = $request->except('_token');
+        $data['user_id'] = Auth::user()->id;
+
+        $this->repository->create($data);
+
+        return redirect()->route('servicos.index')
+            ->with('success', 'Serviço cadastrado com sucesso.');
     }
 
-    public function show(){
-        $servico=Servico::all();
-        return view('servico/mostrarServico',compact('servico'));
-        //
-    }
-
-    public function edit($id)
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
     {
         //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        $servico = $this->repository->where('id', $id)->first();
+
+        return view('admin.pages.servicos.edit', [
+            'servico' => $servico,
+        ]);
     }
 
     /**
@@ -73,7 +91,16 @@ class ServicoController extends Controller{
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = $request->except('_token');
+        if (!$servico = $this->repository->where('id', $id)->first())
+            return redirect()->back();
+
+        $data['user_id'] = Auth::user()->id;
+
+        $servico->update($data);
+
+        return redirect()->route('servicos.index')
+            ->with('update', 'Servico edtitado com sucesso.');
     }
 
     /**
@@ -84,6 +111,12 @@ class ServicoController extends Controller{
      */
     public function destroy($id)
     {
-        //
+        if (!$servico = $this->repository->where('id', $id)->first())
+            return redirect()->back();
+
+        $servico->delete();
+
+        return redirect()->route('servicos.index')
+        ->with('delete', 'Serviço apagado com sucesso.');
     }
 }

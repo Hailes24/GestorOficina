@@ -2,80 +2,140 @@
 
 namespace App\Http\Controllers;
 
-
-use App\Providers\RouteServiceProvider;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Http\Requests\StoreUpdateVeiculoRequest;
 use App\Models\Veiculo;
-use App\Models\Cliente;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class VeiculoController extends Controller
 {
+    protected $repository;
+    protected $request;
+
+    public function __construct(Request $request, Veiculo $veiculo)
+    {
+        $this->request = $request;
+        $this->repository = $veiculo;
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(){
-        $cliente=Cliente::all();
-       // return view('cliente/mostrarCliente', compact('cliente')); 
-        return view('veiculo/incluirVeiculo', compact('cliente')); 
-     }
- 
-     public function create(Request $data)    {
-              
-         Veiculo::create([
-             'idFuncionario' => $data['idFuncionario'],
-             'idcliente' => $data['idcliente'],
-             'placa' => $data['placa'],            
-             'modelo' => $data['modelo'],  
-             'marca' => $data['marca'],
-             'combustivel' => $data['combustivel'],            
-             'cor' => $data['cor'],            
-         ]);
-         return redirect('/dashboard');      
-     }
- 
-     public function store(){
-         $search = request('search');
-         
-         if($search){
-             $veiculo=Veiculo::where([
-                 ['placa', 'like','%'. $search.'%']
-             ])->get();
-             return view('veiculo/PesquisarVeiculo', ['search'=> $veiculo, ' search'=> $search]);
-         }else{
-             
-             return  $search;
-         }
-     }
- 
-    
-     public function show(){
-         $veiculo=Veiculo::all();
-         return view('veiculo/mostrarveiculo',compact('veiculo'));
-         //
-     }
- 
-     
-     public function edit($id)
-     {
-         //
-     }
- 
-    
-    public function update(Request $request, $id){
-        //
+    public function index()
+    {
+
+        $veiculos = $this->repository->paginate(15);
+
+        return view('admin.pages.veiculos.index', [
+            'veiculos' => $veiculos
+
+        ])->with('i', (request()->input('page', 1) - 1) * 5);
     }
 
-    public function destroy($id){
-        $vei=veiculo::find($id);
-        if(isset($vei)){
-            $vei->delete();
-        }
-        return redirect('/mostrarVeiculos')->with('smg', 'Evento Excluido Com sucesso');
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        $clientes = DB::select('select * from clientes');
+        return view('admin.pages.veiculos.create', [
+            'clientes' => $clientes
+        ]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(StoreUpdateVeiculoRequest $request)
+    {
+        $data = $request->except('_token');
+        $data['cliente_id'] = $request->cliente;
+        $data['user_id'] = Auth::user()->id;
+        /* $user_id = $request->clinte;
+        if ((int)$user_id <= 0)
+            return redirect()->back();
+        dd($data);*/
+        $this->repository->create($data);
+        return redirect()->route('veiculos.index')
+        ->with('success', 'Veículo Cadastrado com sucesso.');
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+
+        $veiculo = $this->repository->where('id', $id)->first();
+        return view('admin.pages.veiculos.edit', [
+            'veiculo' => $veiculo
+
+        ]);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        $clientes = DB::select('select * from clientes');
+        $veiculo = $this->repository->where('id', $id)->first();
+        return view('admin.pages.veiculos.edit', [
+            'veiculo' => $veiculo,
+            'clientes' => $clientes
+        ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(StoreUpdateVeiculoRequest $request, $id)
+    {
+        $data = $request->except('_token');
+
+        $veiculo = $this->repository->where('id', $id)->first();
+
+        $data['cliente_id'] = $request->cliente;
+        $data['user_id'] = Auth::user()->id;
+
+        $veiculo->update($data);
+
+        return redirect()->route('veiculos.index')
+        ->with('update', 'Veículo Edtitado com sucesso.');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        $veiculo = $this->repository->where('id', $id)->first();
+        
+        $veiculo->delete();
+
+        return redirect()->route('veiculos.index')
+        ->with('delete', 'Veículo apagado com sucesso.');
+
     }
 }

@@ -2,70 +2,60 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUpdateClienteRequest;
+use App\Models\Cliente;
 use Illuminate\Http\Request;
-use App\Providers\RouteServiceProvider;
-use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Models\cliente;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
-class ClienteController extends Controller{
+class ClienteController extends Controller
+{
+    protected $request;
+    protected $repository;
+    public function __construct(Request $request, Cliente $cliente)
+    {
+        $this->request = $request;
+        $this->repository = $cliente;
+    }
 
-    public function __construct(Request $request, )
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
     {
 
-    }
-    
-    public function index(){
-        
-        return view('cliente/registarCliente');
-       
-       // return redirect('/Cliente'); 
+        $clientes = $this->repository->paginate(15);
+        return view('admin.pages.clientes.index', [
+            'clientes' => $clientes
+        ])->with('i', (request()->input('page', 1) - 1) * 5);
     }
 
-    
-    public function create(Request $data){
-        /*$data ->validate([
-            $data = 
-            return view('admin.pages.create');
-             'telefone'=>'required|unique:clientes|min:9|max:9',  'nome'=>'required|min:10|max:100','email'=>'required|email']);
-             */   
-         $regra=['telefone'=>'required|unique:clientes|min:9|max:9',  'nome'=>'required|min:10|max:100','email'=>'required|email'];
-         $message=['required'=>'O campo não pode estar em branco',
-         'email'=>'Digite um endereço de email válido',
-         'telefone.min'=>'É necessário no mínimo 9 caracteres ',
-         'telefone.max'=>'É necessário 9 caracteres ao máximo',
-         'nome.min'=>'Nome inválido',
-         'nome.max'=>'Nome inválido'];
-         $data->validate($regra, $message);
-                  
-         Cliente::create([
-             'idFuncionario' => $data['idFuncionario'],
-             'nome' => $data['nome'], 
-             'email' => $data['email'],
-             'telefone' => $data['telefone'],           
-             'dataHora' => now()->format('Y-m-d H:i'),             
-         ]);
-         return redirect('/dashboard');
-     }
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //dd(Auth::user()->id);
+        return view('admin.pages.clientes.create');
+    }
 
-    
-    public function store(){
-        
-        $search = request('search');
-        
-        if($search){
-            $cliente=Cliente::where([
-                ['nome', 'like','%'. $search.'%']
-            ])->get();
-            return view('cliente/Pesquisarcliente', ['search'=> $cliente, ' search'=> $search]);
-        }else{
-            
-            return  $search;
-        }
-       
-        //
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(StoreUpdateClienteRequest $request)
+    {
+        $data = $request->except('_token');
+        $data['user_id'] = Auth::User()->id;
+        $this->repository->create($data);
+        return redirect()->route('clientes.index')
+            ->with('success', 'Cliente Cadastrado com sucesso.');
     }
 
     /**
@@ -74,10 +64,9 @@ class ClienteController extends Controller{
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(){
-        
-        $cliente=Cliente::all();
-        return view('cliente/mostrarCliente', compact('cliente')); 
+    public function show($id)
+    {
+        //
     }
 
     /**
@@ -88,7 +77,11 @@ class ClienteController extends Controller{
      */
     public function edit($id)
     {
-        //
+
+        $cliente = $this->repository->where('id', $id)->first();
+        return view('admin.pages.clientes.edit', [
+            'cliente' => $cliente
+        ]);
     }
 
     /**
@@ -98,9 +91,15 @@ class ClienteController extends Controller{
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(StoreUpdateClienteRequest $request, $id)
     {
-        //
+        $cliente = $this->repository->Where('id', $id)->first();
+        $data = $request->except('_token');
+        $data['user_id'] = Auth::user()->id;
+        $cliente->update($data);
+
+        return redirect()->route('clientes.index')
+            ->with('update', 'Cliente Edtitado com sucesso.');
     }
 
     /**
@@ -109,11 +108,18 @@ class ClienteController extends Controller{
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id){
-        $cli=cliente::find($id);
-        if(isset($cli)){
-            $cli->delete();
-        }
-        return redirect('/mostrarCliente')->with('smg', 'Evento Excluido Com sucesso');
+    public function destroy($id)
+    {
+
+        if (!$cliente = $this->repository->where('id', $id)->first())
+            return redirect()->back();
+
+        if ($veiculo = DB::select('select * from veiculos where cliente_id = ?', [$id]))
+                return redirect()->back()->with('delete', 'Não foi possivel apagar este cliente existe um veiculo associado a ele.');
+
+        $cliente->delete();
+
+        return redirect()->route('clientes.index')
+            ->with('delete', 'Cliente Apagado com sucesso.');
     }
 }

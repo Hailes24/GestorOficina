@@ -2,122 +2,155 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUpdateProdutoRequest;
+use App\Models\Categoria;
+use App\Models\Produto;
+use App\Models\Veiculo;
 use Illuminate\Http\Request;
-use App\Providers\RouteServiceProvider;
-use App\Http\Controllers\Controller;
-use App\Models\produto;
-use App\Models\cliente;
-use App\Models\categoria;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
-class ProdutoController extends Controller{
-    
-    public function index(){
-       return view('produto/incluircategoria');
+class ProdutoController extends Controller
+{
+
+    protected $request;
+    protected $repository;
+    public function __construct(Request $request, Produto $produto)
+    {
+        $this->request = $request;
+        $this->repository = $produto;
+    }
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        //$produtos =$this->repository->paginate(15);
+        $produtos = Produto::with('categorias')->paginate(15);
+
+        return view('admin.pages.produtos.index', [
+            'produtos' => $produtos
+        ])->with('i', (request()->input('page', 1) - 1) * 5);
     }
 
-    public function indexP(){
-        $categoria=categoria::all();
-        return view('produto/incluirproduto', compact('categoria')); 
-       // return view('veiculo/incluirVeiculo', compact('cliente')); 
-       
-     }
-   
-    public function create(Request $data){
-        $regra=['nome'=>'required|min:5|max:500'];
-        $message=['required'=>'O campo não pode estar em branco',
-        'nome.min'=>'Nome inválido',
-        'nome.max'=>'Nome inválido',
-        'nome.unique'=>'Este Serviço Já foi cadastrado. Por Favor, insira outro diferente'];
-        $data->validate($regra, $message);
-        categoria::create([
-            'nome' => $data['nome'],            
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        $categorias = DB::select('select * from categorias');
+        return view('admin.pages.produtos.create', [
+            'categorias' => $categorias
         ]);
-        return view('/dashboard');
     }
 
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \App\Http\Requests\StoreUpdateProdutoRequest  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(StoreUpdateProdutoRequest $request)
+    {
+        $data = $request->except('_token');
 
-    public function cadastrarProduto(Request $data){
-        $cliente=Cliente::all();
-        
-        produto::create([
-            'idCategoria' => $data['idCategoria'],
-            'idFuncionario' => $data['idFuncionario'],
-            'precoCompra' => $data['precoCompra'],
-            'precoVenda' => $data['precoVenda'],              
-            'lucro' => $data['lucro'],
-            'nome' => $data['nome'], 
-            'codigoBarra' => $data['codigoBarra'],  
-            'placa' => $data['placa'],  
-            'stoqueminimo' => $data['stoqueminimo'],  
-            'stoquemaximo' => $data['stoquemaximo'],
-            'stok' => $data['stok'],       
-            'foto' => $data['foto'],     
-            'marca' => $data['marca'],     
-            'localizacao' => $data['localizacao'],                
-                        
+        if ($request->hasFile('foto') && $request->foto->isValid()) {
+            $fotoFile = $request->nome . '.' . $request->foto->extension();
+            $request->foto->storeAs('produtos', $fotoFile);
+            $data['foto'] = $fotoFile;
+            $data['categoria_id'] = $request->categoria;
+            $data['lucro'] = $request->preco_venda - $request->preco_compra;
+        }
+        $this->repository->create($data);
+
+        return redirect()->route('produtos.index')
+            ->with('success', 'Produto Cadastrado com sucesso.');
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        $produto = $this->repository->where('id', $id)->first();
+        $categoria = DB::select('select * from categorias where id = ?', $produto->id);
+
+        return view('admin.pages.produtos.show', [
+            'produto' => $produto,
+            'categoria' => $categoria
         ]);
-            return view('/dashboard', compact('cliente'));      
-       
     }
-    public function verTodososProdutos(){
-        $produto=produto::all();
-        $categoria=categoria::all();  
-        return view('produto/verProdutos', compact('categoria','produto'));
-    }
-    /*PESQUISAR TODAS AS CATEGORIAS*/
 
-    public function store(){
-        //
-        $search = request('search');
-        
-        if($search){
-            $categoria=categoria::where([
-                ['nome', 'like','%'. $search.'%']
-            ])->get();
-            return view('produto/categoria/pesquisarC', ['search'=> $categoria, ' search'=> $search]);
-        }else{
-            
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        $produto = $this->repository->where('id', $id)->first();
+        //$categoria = DB::select('select * from categorias where id = ?', [$produto->categoria_id]);
+        $categorias = DB::select('select * from categorias');
+        return view('admin.pages.produtos.edit', [
+            'produto' => $produto,
+            'categorias'=>$categorias
+        ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \App\Http\Requests\StoreUpdateProdutoRequest  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(StoreUpdateProdutoRequest $request, $id)
+    {
+        $data = $request->except('_token');
+        if (!$produto = $this->repository->where('id', $id)->first())
+            return redirect()->back();
+
+        if ($produto->foto && Storage::exists($produto->foto)) {
+            Storage::delete($produto->foto);
         }
-    }
-    /*LISTAR TODAS AS CATEGORIAS*/
-    public function showCategoria(){
-        
-        $categoria=categoria::all();
-        return view('produto/categoria/vercategoria', compact('categoria')); 
-    }
 
-    /*LISTAR TODAS OS PRODUTOS*/
-    public function show($id){
-        $produto=produto::all();
-        return view('produto/verprodutos.blade', compact('produto')); 
-    }
-
-    public function edit(){
-
-        //$cat=categoria::find($id);
-        //if(isset($cat)){
-            return view('produto/categoria/editarC');
-        //}
-        //
-    }
-
-    public function update(Request $request, $id){
-        $cat=categoria::find($id);
-        if(isset($cat)){
-            $cat->nome=$request->imput('nome');
-            $cat->save();
+        if ($request->hasFile('foto') && $request->foto->isValid()) {
+            $fotoFile = $request->nome . '.' . $request->foto->extension();
+            $request->foto->storeAs('produtos', $fotoFile);
+            $data['foto'] = $fotoFile;
+            $data['categoria_id'] = $request->categoria;
+            $data['lucro'] = $request->preco_venda - $request->preco_compra;
         }
-        return redirect('/categoria-reg');
+        $produto->update($data);
+
+        return redirect()->route('produtos.index')
+            ->with('update', 'Produtos Edtitado com sucesso.');
     }
 
-    
-    public function destroyCat($id){
-        $cat=categoria::find($id);
-        if(isset($cat)){
-            $cat->delete();
-        }
-        return redirect('/categoria')->with('smg', 'Evento Excluido Com sucesso');
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        if (!$produto = $this->repository->where('id', $id)->first())
+            return redirect()->back();
+
+        if ($produto->foto && Storage::exists($produto->foto))
+            Storage::delete($produto->foto);
+        $produto->delete();
+
+        return redirect()->route('produtos.index')
+            ->with('delete', 'Veículo apagado com sucesso.');
     }
 }
