@@ -19,6 +19,7 @@ class ProdutoController extends Controller
     {
         $this->request = $request;
         $this->repository = $produto;
+        $this->middleware('auth');
     }
     /**
      * Display a listing of the resource.
@@ -151,6 +152,18 @@ class ProdutoController extends Controller
         $produto->delete();
 
         return redirect()->route('produtos.index')
-            ->with('delete', 'Veículo apagado com sucesso.');
+            ->with('delete', 'Produto excluido com sucesso.');
+    }
+
+    /**
+     * GetDataProduto .
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getDataProduto(Request $request)
+    {
+        $produto = $this->repository->where('id', $request->id)->first();
+        return response()->json($produto);
     }
 }

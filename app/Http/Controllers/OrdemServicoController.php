@@ -18,6 +18,7 @@ class OrdemServicoController extends Controller
     {
         $this->request = $request;
         $this->repository = $ordem;
+        $this->middleware('auth');
     }
 
     /**

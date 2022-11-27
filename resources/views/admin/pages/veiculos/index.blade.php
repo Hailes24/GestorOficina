@@ -24,6 +24,7 @@
     <tr>
         <th>No</th>
         <th>Placa</th>
+        <th>Cliente</th>
         <th>Modelo</th>
         <th>Marca</th>
         <th>Combustivel</th>
@@ -35,6 +36,7 @@
     <tr>
         <td>{{ ++$i }}</td>
         <td>{{ $veiculo->placa }}</td>
+        <td>{{ $veiculo->nome }}</td>
         <td>{{ $veiculo->modelo }}</td>
         <td>{{ $veiculo->marca }}</td>
         <td>{{ $veiculo->combustivel }}</td>

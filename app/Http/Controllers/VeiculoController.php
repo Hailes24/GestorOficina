@@ -26,8 +26,12 @@ class VeiculoController extends Controller
      */
     public function index()
     {
+        $veiculos = $this->repository
+        ->join('clientes', 'veiculos.cliente_id', '=', 'clientes.id')
+        ->select('veiculos.*', 'clientes.nome')
+        ->paginate(15);
 
-        $veiculos = $this->repository->paginate(15);
+        //$veiculos = $this->repository->paginate(15);
 
         return view('admin.pages.veiculos.index', [
             'veiculos' => $veiculos
@@ -131,7 +135,7 @@ class VeiculoController extends Controller
     public function destroy($id)
     {
         $veiculo = $this->repository->where('id', $id)->first();
-        
+
         $veiculo->delete();
 
         return redirect()->route('veiculos.index')

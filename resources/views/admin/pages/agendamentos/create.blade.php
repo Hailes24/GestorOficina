@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Editar Produto')
+@section('title', 'Cadastrar Agendamento')
 
 @section('content_header')
-    <h1>Cadastrar produto - {{$produto->nome}}</h1>
+    <h1>Cadastrar Agendamento</h1>
 @stop
 
 @section('content')
@@ -12,11 +12,10 @@
             @include('includes.alerts.alerts')
             <div class="card card-primary">
                 <div class="card-header">
-                    <h3 class="card-title">Dados do produtos</h3>
+                    <h3 class="card-title">Dados do Agendamento</h3>
                 </div>
-                <form action="{{ route('produtos.update', $produto->id) }}" method="post" enctype="multipart/form-data">
-                    @method('PUT')
-                    @include('includes.components.produtos.form')
+                <form action="{{ route('agendamentos.store') }}" method="post" enctype="multipart/form-data">
+                    @include('includes.components.agendamentos.form')
                 </form>
 
             </div>
@@ -33,3 +32,4 @@
         console.log('Hi!');
     </script>
 @stop
+

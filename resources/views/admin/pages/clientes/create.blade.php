@@ -17,7 +17,6 @@
                 <form action="{{ route('clientes.store') }}" method="post">
                     @include('includes.components.clientes.form')
                 </form>
-
             </div>
         </div>
     </div>
