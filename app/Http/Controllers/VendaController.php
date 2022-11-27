@@ -2,21 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Servico;
+use App\Http\Requests\StoreUpdateFaturaRequest;
+use App\Http\Requests\StoreUpdateVendaRequest;
+use App\Models\Cliente;
+use App\Models\Fatura;
+use App\Models\Venda;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
-class ServicoController extends Controller
+class VendaController extends Controller
 {
-
     protected $request;
     protected $repository;
-    public function __construct(Request $request, Servico $servico)
+
+    public function __construct(Request $request, Venda $venda)
     {
         $this->request = $request;
-        $this->repository = $servico;
+        $this->repository = $venda;
         $this->middleware('auth');
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -24,9 +30,13 @@ class ServicoController extends Controller
      */
     public function index()
     {
-        $servicos = $this->repository->paginate(15);
-        return view('admin.pages.servicos.index', [
-            'servicos' => $servicos
+        //$vendas = $this->repository->paginate(15);;
+        $vendas = $this->repository->join('clientes', 'vendas.cliente_id', '=', 'clientes.id')
+        ->select('vendas.*', 'clientes.nome')
+        ->paginate(15);
+
+        return view('admin.pages.vendas.index', [
+            'vendas' =>  $vendas,
         ])->with('i', (request()->input('page', 1) - 1) * 5);
     }
 
@@ -37,7 +47,10 @@ class ServicoController extends Controller
      */
     public function create()
     {
-        return view('admin.pages.servicos.create');
+        $clientes = DB::select('select * from clientes');
+        return view('admin.pages.vendas.create', [
+            'clientes'=> $clientes
+        ]);
     }
 
     /**
@@ -46,15 +59,27 @@ class ServicoController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreUpdateVendaRequest $request)
     {
         $data = $request->except('_token');
+        if (!$venda = $this->repository->latest()->get())
+            $data['num_fatura'] = $venda->id+1;
+        else
+            $data['num_fatura'] = 1;
+
         $data['user_id'] = Auth::user()->id;
 
         $this->repository->create($data);
 
-        return redirect()->route('servicos.index')
-            ->with('success', 'Serviço cadastrado com sucesso.');
+        $venda = Venda::latest()->first();
+        $cliente = Cliente::where('id', $venda->cliente_id)->first();
+        $produtos = DB::select('select * from produtos');
+        return view('admin.pages.faturas._create', [
+                    'produtos'=>$produtos,
+                    'venda' => $venda,
+                    'cliente' => $cliente,
+        ]);
+
     }
 
     /**
@@ -76,11 +101,7 @@ class ServicoController extends Controller
      */
     public function edit($id)
     {
-        $servico = $this->repository->where('id', $id)->first();
-
-        return view('admin.pages.servicos.edit', [
-            'servico' => $servico,
-        ]);
+        //
     }
 
     /**
@@ -92,16 +113,7 @@ class ServicoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $data = $request->except('_token');
-        if (!$servico = $this->repository->where('id', $id)->first())
-            return redirect()->back();
-
-        $data['user_id'] = Auth::user()->id;
-
-        $servico->update($data);
-
-        return redirect()->route('servicos.index')
-            ->with('update', 'Servico edtitado com sucesso.');
+        //
     }
 
     /**
@@ -112,12 +124,6 @@ class ServicoController extends Controller
      */
     public function destroy($id)
     {
-        if (!$servico = $this->repository->where('id', $id)->first())
-            return redirect()->back();
-
-        $servico->delete();
-
-        return redirect()->route('servicos.index')
-        ->with('delete', 'Serviço apagado com sucesso.');
+        //
     }
 }

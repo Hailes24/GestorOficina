@@ -1,22 +1,24 @@
 @extends('adminlte::page')
 
-@section('title', 'Editar Produto')
+@section('title', 'Criar Factura')
 
 @section('content_header')
-    <h1>Cadastrar produto - {{$produto->nome}}</h1>
+    <h1>Emitir Nova Factura</h1>
 @stop
 
 @section('content')
+
+
     <div class="row">
         <div class="col-md-12">
             @include('includes.alerts.alerts')
             <div class="card card-primary">
                 <div class="card-header">
-                    <h3 class="card-title">Dados do produtos</h3>
+                    <h3 class="card-title">Dados da fatura</h3>
                 </div>
-                <form action="{{ route('produtos.update', $produto->id) }}" method="post" enctype="multipart/form-data">
-                    @method('PUT')
-                    @include('includes.components.produtos.form')
+                <form class="form" name="formfatura">
+                    @include('includes.components.faturas._form')
+
                 </form>
 
             </div>
@@ -30,6 +32,6 @@
 
 @section('js')
     <script>
-        console.log('Hi!');
+       @include('includes.components.faturas.utilitario')
     </script>
 @stop

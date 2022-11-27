@@ -12,10 +12,16 @@ class Cliente extends Model
             'nome',
             'email',
             'telemovel',
+            'user_id',
     ];
 
     public function ordem()
     {
         return $this->hasMany(ordemDeServico::class,'cliente_id','id');
     }
+    public function venda()
+    {
+        return $this->hasMany(Venda::class,'cliente_id','id');
+    }
+
 }

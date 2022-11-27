@@ -16,6 +16,7 @@ class ClienteController extends Controller
     {
         $this->request = $request;
         $this->repository = $cliente;
+        $this->middleware('auth');
     }
 
     /**
@@ -121,5 +122,17 @@ class ClienteController extends Controller
 
         return redirect()->route('clientes.index')
             ->with('delete', 'Cliente Apagado com sucesso.');
+    }
+
+    /**
+     * GetDataCLiente .
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getDataCliente(Request $request)
+    {
+        $cliente = $this->repository->where('id', $request->id)->first();
+        return response()->json($cliente);
     }
 }

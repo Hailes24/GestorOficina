@@ -383,7 +383,7 @@ return [
             ],
         ],
         [
-            'text'    => 'Gestão Ordem de Serviço',
+            'text'    => 'Gestão Ordem Serviço',
             'icon'    => 'fas fa-fw fa-file',
             'submenu' => [
                 [
@@ -416,6 +416,22 @@ return [
                 ],
             ],
         ],
+        [
+            'text'    => 'Agendamentos',
+            'icon'    => 'fas fa-calendar',
+            'submenu' => [
+                [
+                    'text' => 'Cadastrar',
+                    'icon' => 'fas fa-fw fa-plus-circle',
+                    'url'  => 'agendamentos/create',
+                ],
+                [
+                    'text' => 'Listagem',
+                    'icon' => 'fas fa-fw fa-list',
+                    'url'  => 'agendamentos',
+                ],
+            ],
+        ],
 
         [
             'text'    => 'Gestão Facturas',
@@ -424,7 +440,7 @@ return [
                 [
                     'text' => 'Cadastrar',
                     'icon' => 'fas fa-fw fa-plus-circle',
-                    'url'  => '#',
+                    'url'  => 'vendas/create',
                 ],
                 [
                     'text' => 'Listagem',
@@ -447,7 +463,7 @@ return [
                 [
                     'text' => 'Listagem',
                     'icon' => 'fas fa-fw fa-list',
-                    'url'  => '#',
+                    'url'  => 'vendas',
                 ],
                 [
                     'text' => 'Consultar',
@@ -474,14 +490,56 @@ return [
         ],
         ['header' => 'account_settings'],
         [
-            'text' => 'profile',
-            'url'  => 'admin/settings',
-            'icon' => 'fas fa-fw fa-user',
+            'text'    => 'Gestão de Funcionarios',
+            'icon'    => 'fas fa-fw fa-user',
+            'submenu' => [
+                [
+                    'text' => 'Novo',
+                    'icon' => 'fas fa-fw fa-plus-circle',
+                    'url'  => 'funcionarios/create',
+                ],
+                [
+                    'text' => 'Listagem',
+                    'icon' => 'fas fa-fw fa-list',
+                    'url'  => 'funcionarios',
+                ],
+                [
+                    'text' => 'profile',
+                    'url'  => 'perfils',
+                    'icon' => 'fas fa-fw fa-user',
+                ],
+                [
+                    'text' => 'change_password',
+                    'url'  => 'admin/settings',
+                    'icon' => 'fas fa-fw fa-lock',
+                ],
+            ],
         ],
         [
-            'text' => 'change_password',
-            'url'  => 'admin/settings',
-            'icon' => 'fas fa-fw fa-lock',
+            'text'    => 'Gestão de Perfis',
+            'icon'    => 'fas fa-fw fa-user',
+            'submenu' => [
+                [
+                    'text' => 'Novo',
+                    'icon' => 'fas fa-fw fa-plus-circle',
+                    'url'  => 'register',
+                ],
+                [
+                    'text' => 'Listagem',
+                    'icon' => 'fas fa-fw fa-list',
+                    'url'  => '',
+                ],
+                [
+                    'text' => 'profile',
+                    'url'  => 'perfils',
+                    'icon' => 'fas fa-fw fa-user',
+                ],
+                [
+                    'text' => 'change_password',
+                    'url'  => 'admin/settings',
+                    'icon' => 'fas fa-fw fa-lock',
+                ],
+            ],
         ],
         /*[
             'text'    => 'multilevel',
